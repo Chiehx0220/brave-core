@@ -37,9 +37,16 @@ jobs:
           java-version: "17"
 
       - name: Install apktool
+        # The apt package (2.7.0) can't decode the "compact" resource entry
+        # format newer AAPT2 emits, and fails with "Could not decode arsc
+        # file" on large modern APKs like Brave's. Use a current release jar.
         run: |
-          sudo apt-get update
-          sudo apt-get install -y apktool
+          curl -fsSL -o apktool.jar \
+            "https://github.com/iBotPeaches/Apktool/releases/download/v3.0.3/apktool_3.0.3.jar"
+          sudo mv apktool.jar /usr/local/bin/apktool.jar
+          printf '#!/bin/sh\nexec java -jar /usr/local/bin/apktool.jar "$@"\n' | sudo tee /usr/local/bin/apktool > /dev/null
+          sudo chmod +x /usr/local/bin/apktool
+          apktool --version
 
       - name: Download official Brave APK
         run: |
