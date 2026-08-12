@@ -61,10 +61,10 @@ jobs:
           echo "--- total .smali file count ---"
           find decoded -name '*.smali' | wc -l
           echo
-          echo "--- searching for known Brave class names by exact filename ---"
-          for cls in BraveNewTabPageLayout BraveTopToolbarCoordinator BraveNtpAdapter SponsoredTab BackgroundImagesPreferences ViewCounterService; do
+          echo "--- searching for known Brave class names (wildcard both sides) ---"
+          for cls in BraveNewTabPageLayout BraveTopToolbarCoordinator BraveNtpAdapter SponsoredTab BackgroundImagesPreferences ViewCounterService NTPBackgroundImagesBridge; do
             echo "[$cls]"
-            find decoded -iname "${cls}.smali" -o -iname "${cls}\$*.smali" | head -5
+            find decoded -iname "*${cls}*.smali" | head -10
           done
           echo
           echo "--- sampling: first 20 smali file basenames actually present (to eyeball obfuscation) ---"
