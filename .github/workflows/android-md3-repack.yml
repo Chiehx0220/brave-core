@@ -68,6 +68,17 @@ jobs:
       - name: Decompile
         run: apktool d Bravearm64Universal.apk -o decoded
 
+      - name: Inspect decompiled resource layout
+        run: |
+          echo "--- res/ subdirectories ---"
+          find decoded/res -maxdepth 1 -type d | sort
+          echo "--- files under res/values*/ ---"
+          find decoded/res -maxdepth 1 -type d -name 'values*' -exec sh -c 'echo "[$1]"; ls "$1"' _ {} \;
+          echo "--- searching for target resource names anywhere under res/ ---"
+          grep -rln "location_bar_background_color_for_ntp\|toolbar_background_color_for_ntp" decoded/res || echo "NOT FOUND anywhere under res/"
+          echo "--- home_surface_background_color.xml ---"
+          find decoded/res -iname "home_surface_background_color.xml"
+
       - name: Patch MD3 resources
         run: python3 tools/android_md3_repack/patch_resources.py decoded
 
