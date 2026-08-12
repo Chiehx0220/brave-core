@@ -1,0 +1,74 @@
+name: Smali obfuscation check (diagnostic)
+
+# One-off diagnostic: checks whether Brave's own Java/Kotlin class names
+# survive R8/code shrinking in the official release APK. This determines
+# whether a bytecode-level patch (e.g. a Morphe/ReVanced-style patch,
+# targeting classes by name or fingerprint) is feasible, as an alternative
+# to the resource-name-based apktool approach, which failed because
+# resources.arsc has its resource *names* stripped in the shipped build
+# (see android-md3-repack.yml history).
+#
+# Not intended to produce any artifact — just prints findings to the log.
+
+on:
+  workflow_dispatch:
+    inputs:
+      brave_release_tag:
+        description: "brave/brave-browser release tag to inspect"
+        required: true
+        default: "v1.95.61"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install apktool
+        run: |
+          curl -fsSL -o apktool.jar \
+            "https://github.com/iBotPeaches/Apktool/releases/download/v3.0.3/apktool_3.0.3.jar"
+          sudo mv apktool.jar /usr/local/bin/apktool.jar
+          printf '#!/bin/sh\nexec java -jar /usr/local/bin/apktool.jar "$@"\n' | sudo tee /usr/local/bin/apktool > /dev/null
+          sudo chmod +x /usr/local/bin/apktool
+
+      - name: Download official Brave APK
+        run: |
+          gh release download "${{ inputs.brave_release_tag }}" \
+            --repo brave/brave-browser \
+            --pattern "Bravearm64Universal.apk" \
+            --pattern "Bravearm64Universal.apk.sha256"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Verify checksum
+        run: |
+          expected=$(cut -d' ' -f1 Bravearm64Universal.apk.sha256)
+          actual=$(sha256sum Bravearm64Universal.apk | cut -d' ' -f1)
+          [ "$expected" = "$actual" ] || { echo "checksum mismatch"; exit 1; }
+
+      - name: Decompile
+        run: apktool d Bravearm64Universal.apk -o decoded
+
+      - name: Check class name survival
+        run: |
+          echo "--- smali* directories present ---"
+          find decoded -maxdepth 1 -type d -name 'smali*' | sort
+          echo
+          echo "--- total .smali file count ---"
+          find decoded -name '*.smali' | wc -l
+          echo
+          echo "--- searching for known Brave class names by exact filename ---"
+          for cls in BraveNewTabPageLayout BraveTopToolbarCoordinator BraveNtpAdapter SponsoredTab BackgroundImagesPreferences ViewCounterService; do
+            echo "[$cls]"
+            find decoded -iname "${cls}.smali" -o -iname "${cls}\$*.smali" | head -5
+          done
+          echo
+          echo "--- sampling: first 20 smali file basenames actually present (to eyeball obfuscation) ---"
+          find decoded -name '*.smali' | xargs -n1 basename | sort | uniq | head -20
+          echo
+          echo "--- ratio check: how many smali files contain the literal string 'Brave' in their path ---"
+          find decoded -name '*.smali' -path '*Brave*' | wc -l
