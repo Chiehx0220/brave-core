@@ -5,58 +5,6 @@
      You can obtain one at https://mozilla.org/MPL/2.0/.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Overriding chromium baseline_* palette with Nala primitive_* equivalents -->
-    <!-- baseline_primary -->
-    <color name="baseline_primary_100" tools:ignore="UnusedResources">@color/primitive_primary_100</color>
-    <color name="baseline_primary_95" tools:ignore="UnusedResources">@color/primitive_primary_95</color>
-    <color name="baseline_primary_90" tools:ignore="UnusedResources">@color/primitive_primary_90</color>
-    <color name="baseline_primary_80" tools:ignore="UnusedResources">@color/primitive_primary_80</color>
-    <color name="baseline_primary_70" tools:ignore="UnusedResources">@color/primitive_primary_70</color>
-    <color name="baseline_primary_60" tools:ignore="UnusedResources">@color/primitive_primary_60</color>
-    <color name="baseline_primary_50" tools:ignore="UnusedResources">@color/primitive_primary_50</color>
-    <color name="baseline_primary_40" tools:ignore="UnusedResources">@color/primitive_primary_40</color>
-    <color name="baseline_primary_30" tools:ignore="UnusedResources">@color/primitive_primary_30</color>
-    <color name="baseline_primary_20" tools:ignore="UnusedResources">@color/primitive_primary_20</color>
-    <color name="baseline_primary_10" tools:ignore="UnusedResources">@color/primitive_primary_10</color>
-    <!-- baseline_neutral -->
-    <color name="baseline_neutral_100" tools:ignore="UnusedResources">@color/primitive_neutral_100</color>
-    <color name="baseline_neutral_99" tools:ignore="UnusedResources">@color/primitive_neutral_99</color>
-    <color name="baseline_neutral_95" tools:ignore="UnusedResources">@color/primitive_neutral_95</color>
-    <color name="baseline_neutral_90" tools:ignore="UnusedResources">@color/primitive_neutral_90</color>
-    <color name="baseline_neutral_80" tools:ignore="UnusedResources">@color/primitive_neutral_80</color>
-    <color name="baseline_neutral_70" tools:ignore="UnusedResources">@color/primitive_neutral_70</color>
-    <color name="baseline_neutral_60" tools:ignore="UnusedResources">@color/primitive_neutral_60</color>
-    <color name="baseline_neutral_50" tools:ignore="UnusedResources">@color/primitive_neutral_50</color>
-    <color name="baseline_neutral_40" tools:ignore="UnusedResources">@color/primitive_neutral_40</color>
-    <color name="baseline_neutral_30" tools:ignore="UnusedResources">@color/primitive_neutral_30</color>
-    <color name="baseline_neutral_20" tools:ignore="UnusedResources">@color/primitive_neutral_20</color>
-    <color name="baseline_neutral_10" tools:ignore="UnusedResources">@color/primitive_neutral_10</color>
-    <color name="baseline_neutral_0" tools:ignore="UnusedResources">@color/primitive_neutral_0</color>
-    <!-- baseline_neutral_variant -->
-    <color name="baseline_neutral_variant_90" tools:ignore="UnusedResources">@color/primitive_neutral_variant_90</color>
-    <color name="baseline_neutral_variant_80" tools:ignore="UnusedResources">@color/primitive_neutral_variant_80</color>
-    <color name="baseline_neutral_variant_60" tools:ignore="UnusedResources">@color/primitive_neutral_variant_60</color>
-    <color name="baseline_neutral_variant_50" tools:ignore="UnusedResources">@color/primitive_neutral_variant_50</color>
-    <color name="baseline_neutral_variant_30" tools:ignore="UnusedResources">@color/primitive_neutral_variant_30</color>
-    <!-- baseline_secondary -->
-    <color name="baseline_secondary_95" tools:ignore="UnusedResources">@color/primitive_secondary_95</color>
-    <color name="baseline_secondary_90" tools:ignore="UnusedResources">@color/primitive_secondary_90</color>
-    <color name="baseline_secondary_80" tools:ignore="UnusedResources">@color/primitive_secondary_80</color>
-    <color name="baseline_secondary_70" tools:ignore="UnusedResources">@color/primitive_secondary_70</color>
-    <color name="baseline_secondary_60" tools:ignore="UnusedResources">@color/primitive_secondary_60</color>
-    <color name="baseline_secondary_50" tools:ignore="UnusedResources">@color/primitive_secondary_50</color>
-    <color name="baseline_secondary_40" tools:ignore="UnusedResources">@color/primitive_secondary_40</color>
-    <color name="baseline_secondary_35" tools:ignore="UnusedResources">@color/primitive_secondary_35</color>
-    <color name="baseline_secondary_30" tools:ignore="UnusedResources">@color/primitive_secondary_30</color>
-    <color name="baseline_secondary_25" tools:ignore="UnusedResources">@color/primitive_secondary_25</color>
-    <color name="baseline_secondary_10" tools:ignore="UnusedResources">@color/primitive_secondary_10</color>
-    <!-- baseline_tertiary -->
-    <color name="baseline_tertiary_90" tools:ignore="UnusedResources">@color/primitive_tertiary_90</color>
-    <color name="baseline_tertiary_80" tools:ignore="UnusedResources">@color/primitive_tertiary_80</color>
-    <color name="baseline_tertiary_40" tools:ignore="UnusedResources">@color/primitive_tertiary_40</color>
-    <color name="baseline_tertiary_30" tools:ignore="UnusedResources">@color/primitive_tertiary_30</color>
-    <color name="baseline_tertiary_10" tools:ignore="UnusedResources">@color/primitive_tertiary_10</color>
-
     <!-- Theme colors -->
     <color name="brave_white">@android:color/white</color>
     <color name="brave_link">#4C54D2</color>
@@ -68,15 +16,6 @@
     <color name="modern_blue_300">#FF7654</color>
     <color name="dialog_bg_color_dark_baseline">@color/toolbar_background_primary_dark</color>
     <color name="default_text_color_on_accent1_dark">@color/primitive_neutral_0</color>
-    <color name="gm3_baseline_surface_tint_light">#948989</color>
-    <color name="gm3_baseline_surface_tint_dark">#F7F9FC</color>
-    <!-- Chromium's value is blue-tinted (#F8FAFD); point it at the Nala equivalent so surfaces
-         using ?attr/colorSurfaceContainerLow stay on the design system when dynamic colors are
-         off, and follow the wallpaper when they are on. -->
-    <color name="gm3_baseline_surface_container_low_light">@color/primitive_neutral_98</color>
-    <color name="gm3_baseline_surface_container_light">#F3F1F1</color>
-    <color name="gm3_baseline_surface_container_high_light">#F2F0F0</color>
-    <color name="gm3_baseline_surface_container_highest_light">#F0EEEE</color>
 
     <!-- Day/Night brave wallet colors -->
     <color name="brave_wallet_onboarding_item_background_color">#687485</color>
@@ -301,9 +240,6 @@
     <color name="divider_interactive">#bcc6f3</color>
 
     <color name="text_interactive">#434fcf</color>
-
-    <color name="location_bar_background_color_for_ntp">#f2f2f2</color>
-    <color name="toolbar_background_color_for_ntp">@android:color/white</color>
 
     <color name="semantic_text_interactive">#BCC6F3</color>
     <color name="semantic_divider_interactive">#7686EC</color>

@@ -45,7 +45,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
                                 false);
   registry->RegisterBooleanPref(
       prefs::kNewTabPageShowSponsoredImagesBackgroundImage, true);
-  registry->RegisterBooleanPref(prefs::kNewTabPageShowBackgroundImage, true);
+  registry->RegisterBooleanPref(prefs::kNewTabPageShowBackgroundImage, false);
   registry->RegisterIntegerPref(
       prefs::kNewTabTakeoverInfobarRemainingDisplayCount,
       kNewTabTakeoverInfobarRemainingDisplayCountThreshold);

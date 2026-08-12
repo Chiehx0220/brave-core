@@ -166,9 +166,6 @@
     <color name="button_background_10">#19BCC6F3</color>
     <color name="systemfeedback_error_text">#ff7f72</color>
 
-    <color name="location_bar_background_color_for_ntp">#383839</color>
-    <color name="toolbar_background_color_for_ntp">#1f1f1f</color>
-
     <color name="schemes_on_surface">#e4e4e5</color>
     <color name="schemes_on_surface_variant">#c9c9ca</color>
     <color name="schemes_outline_variant">#464649</color>
