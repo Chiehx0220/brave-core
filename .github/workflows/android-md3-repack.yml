@@ -1,0 +1,98 @@
+name: Android MD3 repack (apktool)
+
+# Repacks the OFFICIAL Brave Android APK (downloaded from brave/brave-browser's
+# public GitHub release) with a subset of the MD3 parity fixes applied as a
+# resource-only patch via apktool. This does NOT compile Brave from source —
+# it only covers fixes that are plain Android resource edits. It intentionally
+# does not cover the NTP-background-default or GM3 baseline-palette fixes,
+# which need a real source build (see CLAUDE.md).
+#
+# Output is unofficially re-signed and cannot update-in-place over an
+# officially-installed Brave; install as a separate app.
+
+on:
+  workflow_dispatch:
+    inputs:
+      brave_release_tag:
+        description: "brave/brave-browser release tag to repack (must have Bravearm64Universal.apk)"
+        required: true
+        default: "v1.95.61"
+      upload_to_release:
+        description: "Attach the resulting APK to this repo's matching draft release (tag name), or leave blank to skip"
+        required: false
+        default: "v1.95.61-pre.1"
+
+permissions:
+  contents: write
+
+jobs:
+  repack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install apktool
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apktool
+
+      - name: Download official Brave APK
+        run: |
+          gh release download "${{ inputs.brave_release_tag }}" \
+            --repo brave/brave-browser \
+            --pattern "Bravearm64Universal.apk" \
+            --pattern "Bravearm64Universal.apk.sha256"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Verify checksum
+        run: |
+          expected=$(cut -d' ' -f1 Bravearm64Universal.apk.sha256)
+          actual=$(sha256sum Bravearm64Universal.apk | cut -d' ' -f1)
+          echo "expected: $expected"
+          echo "actual:   $actual"
+          [ "$expected" = "$actual" ] || { echo "checksum mismatch"; exit 1; }
+
+      - name: Decompile
+        run: apktool d Bravearm64Universal.apk -o decoded
+
+      - name: Patch MD3 resources
+        run: python3 tools/android_md3_repack/patch_resources.py decoded
+
+      - name: Rebuild
+        run: apktool b decoded -o repacked-unsigned.apk
+
+      - name: Zipalign
+        run: |
+          BUILD_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          echo "using build-tools: $BUILD_TOOLS"
+          "$BUILD_TOOLS/zipalign" -v -p 4 repacked-unsigned.apk repacked-aligned.apk
+
+      - name: Generate signing key and sign
+        run: |
+          BUILD_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          keytool -genkeypair -v \
+            -keystore repack.jks -storepass repackpass -alias repack -keypass repackpass \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=brave-core MD3 repack, OU=local, O=local, L=local, S=local, C=US"
+          "$BUILD_TOOLS/apksigner" sign \
+            --ks repack.jks --ks-pass pass:repackpass \
+            --out Brave-MD3-repack-arm64.apk \
+            repacked-aligned.apk
+          "$BUILD_TOOLS/apksigner" verify Brave-MD3-repack-arm64.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Brave-MD3-repack-arm64
+          path: Brave-MD3-repack-arm64.apk
+
+      - name: Attach to draft release
+        if: ${{ inputs.upload_to_release != '' }}
+        run: gh release upload "${{ inputs.upload_to_release }}" Brave-MD3-repack-arm64.apk --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
