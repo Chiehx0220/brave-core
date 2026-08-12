@@ -84,3 +84,14 @@ jobs:
           echo
           echo "--- home_surface_background_color string literal, anywhere ---"
           grep -rl "home_surface_background_color" decoded/smali* decoded/res 2>/dev/null | head -10 || echo "  (none)"
+
+          echo
+          echo "--- decisive check: is internal logic in BraveNewTabPageLayout.smali still readable? ---"
+          F=decoded/smali_classes5/org/chromium/chrome/browser/ntp/BraveNewTabPageLayout.smali
+          echo "file size (lines): $(wc -l < "$F")"
+          echo "method names in this file:"
+          grep -c '^\.method' "$F"
+          grep '^\.method' "$F" | head -30
+          echo
+          echo "does it reference the pref name anywhere (string constant)?"
+          grep -n "show_background_image\|NEW_TAB_PAGE_SHOW_BACKGROUND_IMAGE\|maybeShowNTPImage\|useFixedMVTLayout" "$F" || echo "  (none)"
