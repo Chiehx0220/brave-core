@@ -72,3 +72,15 @@ jobs:
           echo
           echo "--- ratio check: how many smali files contain the literal string 'Brave' in their path ---"
           find decoded -name '*.smali' -path '*Brave*' | wc -l
+          echo
+          echo "--- distinctive method/field names for items #2/#5 (grep inside smali content) ---"
+          for needle in updateModernLocationBarColorImpl mToolbarBackgroundColorForNtp mLocationBarBackgroundColorForNtp; do
+            echo "[$needle]"
+            grep -rl "$needle" decoded/smali* 2>/dev/null | head -5 || echo "  (none)"
+          done
+          echo
+          echo "[BraveStatusBarColorController]"
+          find decoded -iname "*BraveStatusBarColorController*.smali" | head -5
+          echo
+          echo "--- home_surface_background_color string literal, anywhere ---"
+          grep -rl "home_surface_background_color" decoded/smali* decoded/res 2>/dev/null | head -10 || echo "  (none)"
